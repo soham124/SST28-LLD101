@@ -4,15 +4,15 @@
 Hostel fees depend on room type and add-ons. New room types and add-ons will be introduced.
 
 ## 2. Current behavior
-- Uses `dto.BookingRequest` with roomType and add-ons
+- Uses `BookingRequest` with roomType and add-ons
 - Calculates monthly fee + one-time deposit
 - Prints a receipt and saves booking
 
 ## 3. What’s wrong (at least 5 issues)
-1. `feeCalculator.HostelFeeCalculator.calculate` is a switch-case on room types.
+1. `HostelFeeCalculator.calculate` is a switch-case on room types.
 2. Add-ons are handled with repeated branching logic.
 3. Adding a room type requires editing the big switch (OCP violation).
-4. entitites.Money arithmetic is scattered and formatted inconsistently.
+4. Money arithmetic is scattered and formatted inconsistently.
 5. Calculator also prints and persists booking data.
 
 ## 4. Your task
@@ -23,7 +23,7 @@ Checkpoint D: Preserve output.
 
 ## 5. Constraints
 - Keep receipt formatting identical.
-- Keep `dto.BookingRequest` fields unchanged.
+- Keep `BookingRequest` fields unchanged.
 - No external libs.
 
 ## 6. Acceptance criteria
