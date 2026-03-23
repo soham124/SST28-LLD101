@@ -1,40 +1,42 @@
 import java.util.*;
 
 public class OnboardingService {
-    private final Parser parser;
-    private final Validator validator;
-    private final StudentMaker maker;
-    private final StudentStore store;
-    private final OnboardingPrinter printer;
+    private final StudentRepository repository;
+    private final InputParser parser;
+    private final StudentValidator validator;
+    private final ConfirmationPrinter printer;
 
-    public OnboardingService(StudentStore store, OnboardingPrinter printer) {
-        this.store = store;
+    public OnboardingService(StudentRepository repository, InputParser parser, 
+                            StudentValidator validator, ConfirmationPrinter printer) {
+        this.repository = repository;
+        this.parser = parser;
+        this.validator = validator;
         this.printer = printer;
-        this.parser = new Parser();
-        this.validator = new Validator();
-        this.maker = new StudentMaker();
     }
 
-    public StudentRecord registerFromRawInput(String raw) {
-        Map<String, String> map = parser.parse(raw);
+    public void registerFromRawInput(String raw) {
+        printer.printInput(raw);
 
-        RegistrationRequest req = new RegistrationRequest(
-                map.get("name"),
-                map.get("email"),
-                map.get("phone"),
-                map.get("program"));
+        Map<String, String> kv = parser.parse(raw);
 
-        validator.validate(req);
+        String name = kv.getOrDefault("name", "");
+        String email = kv.getOrDefault("email", "");
+        String phone = kv.getOrDefault("phone", "");
+        String program = kv.getOrDefault("program", "");
 
-        StudentRecord rec = maker.make(req, store.count());
+        ValidationResult validationResult = validator.validate(name, email, phone, program);
 
-        printer.printCreated(rec);
+        if (!validationResult.isValid()) {
+            printer.printValidationErrors(validationResult.getErrors());
+            return;
+        }
 
-        store.save(rec);
+        String id = IdUtil.nextStudentId(repository.count());
+        StudentRecord rec = new StudentRecord(id, name, email, phone, program);
 
-        printer.printSaved(store.count());
-        printer.printConfirmation(rec);
+        repository.save(rec);
 
-        return rec;
+        printer.printSuccess(id, repository.count());
+        printer.printRecord(rec);
     }
 }

@@ -1,3 +1,3 @@
 public interface DiscountCalculator {
-    double discountAmount(String customerType, double subtotal, int distinctLines);
+    double calculateDiscount(String customerType, double subtotal, int distinctLines);
 }

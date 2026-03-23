@@ -2,42 +2,37 @@ import java.util.*;
 
 public class CafeteriaSystem {
     private final Map<String, MenuItem> menu = new LinkedHashMap<>();
+    private final InvoiceStorage storage;
     private final TaxCalculator taxCalculator;
     private final DiscountCalculator discountCalculator;
-    private final InvoiceFormatter formatter;
-    private final InvoiceStore store;
+    private final PricingCalculator pricingCalculator;
+    private final InvoiceBuilder invoiceBuilder;
     private int invoiceSeq = 1000;
 
-    public CafeteriaSystem(TaxCalculator taxCalculator, DiscountCalculator discountCalculator,
-            InvoiceFormatter formatter, InvoiceStore store) {
+    public CafeteriaSystem(InvoiceStorage storage, TaxCalculator taxCalculator, 
+                          DiscountCalculator discountCalculator) {
+        this.storage = storage;
         this.taxCalculator = taxCalculator;
         this.discountCalculator = discountCalculator;
-        this.formatter = formatter;
-        this.store = store;
+        this.pricingCalculator = new PricingCalculator(menu);
+        this.invoiceBuilder = new InvoiceBuilder(pricingCalculator);
     }
 
-    public void addToMenu(MenuItem i) {
-        menu.put(i.id, i);
-    }
+    public void addToMenu(MenuItem i) { menu.put(i.id, i); }
 
     public void checkout(String customerType, List<OrderLine> lines) {
         String invId = "INV-" + (++invoiceSeq);
 
-        double subtotal = 0.0;
-        for (OrderLine l : lines) {
-            MenuItem item = menu.get(l.itemId);
-            subtotal += item.price * l.qty;
-        }
-
-        double taxPct = taxCalculator.taxPercent(customerType);
-        double tax = subtotal * (taxPct / 100.0);
-        double discount = discountCalculator.discountAmount(customerType, subtotal, lines.size());
+        double subtotal = pricingCalculator.calculateSubtotal(lines);
+        double taxPct = taxCalculator.getTaxPercent(customerType);
+        double tax = taxCalculator.calculateTax(customerType, subtotal);
+        double discount = discountCalculator.calculateDiscount(customerType, subtotal, lines.size());
         double total = subtotal + tax - discount;
 
-        String printable = formatter.format(invId, menu, lines, subtotal, taxPct, tax, discount, total);
-        System.out.print(printable);
+        String invoice = invoiceBuilder.buildInvoice(invId, lines, subtotal, taxPct, tax, discount, total);
+        System.out.print(invoice);
 
-        store.save(invId, printable);
-        System.out.println("Saved invoice: " + invId + " (lines=" + store.countLines(invId) + ")");
+        storage.save(invId, invoice);
+        System.out.println("Saved invoice: " + invId + " (lines=" + storage.countLines(invId) + ")");
     }
 }

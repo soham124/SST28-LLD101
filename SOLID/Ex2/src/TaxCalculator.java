@@ -1,3 +1,4 @@
 public interface TaxCalculator {
-    double taxPercent(String customerType);
+    double calculateTax(String customerType, double subtotal);
+    double getTaxPercent(String customerType);
 }

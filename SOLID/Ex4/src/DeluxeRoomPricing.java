@@ -1,9 +1,11 @@
 public class DeluxeRoomPricing implements RoomPricing {
-    public boolean supports(int roomType) {
-        return roomType == LegacyRoomTypes.DELUXE;
+    @Override
+    public Money getMonthlyFee() {
+        return new Money(16000.0);
     }
 
-    public double basePrice() {
-        return 16000.0;
+    @Override
+    public int getRoomType() {
+        return LegacyRoomTypes.DELUXE;
     }
 }

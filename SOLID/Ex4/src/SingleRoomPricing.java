@@ -1,9 +1,11 @@
 public class SingleRoomPricing implements RoomPricing {
-    public boolean supports(int roomType) {
-        return roomType == LegacyRoomTypes.SINGLE;
+    @Override
+    public Money getMonthlyFee() {
+        return new Money(14000.0);
     }
 
-    public double basePrice() {
-        return 14000.0;
+    @Override
+    public int getRoomType() {
+        return LegacyRoomTypes.SINGLE;
     }
 }

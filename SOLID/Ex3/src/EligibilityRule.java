@@ -1,3 +1,4 @@
 public interface EligibilityRule {
-    String evaluate(StudentProfile student);
+    boolean isViolated(StudentProfile profile);
+    String getReason();
 }

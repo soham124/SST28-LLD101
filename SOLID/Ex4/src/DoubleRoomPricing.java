@@ -1,9 +1,11 @@
 public class DoubleRoomPricing implements RoomPricing {
-    public boolean supports(int roomType) {
-        return roomType == LegacyRoomTypes.DOUBLE;
+    @Override
+    public Money getMonthlyFee() {
+        return new Money(15000.0);
     }
 
-    public double basePrice() {
-        return 15000.0;
+    @Override
+    public int getRoomType() {
+        return LegacyRoomTypes.DOUBLE;
     }
 }

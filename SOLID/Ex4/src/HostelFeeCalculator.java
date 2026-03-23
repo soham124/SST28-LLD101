@@ -2,13 +2,14 @@ import java.util.*;
 
 public class HostelFeeCalculator {
     private final FakeBookingRepo repo;
-    private final List<RoomPricing> roomPricings;
-    private final List<AddOnPricing> addOnPricings;
+    private final RoomPricingFactory roomPricingFactory;
+    private final AddOnPricingFactory addOnPricingFactory;
 
-    public HostelFeeCalculator(FakeBookingRepo repo, List<RoomPricing> roomPricings, List<AddOnPricing> addOnPricings) {
+    public HostelFeeCalculator(FakeBookingRepo repo, RoomPricingFactory roomPricingFactory, 
+                               AddOnPricingFactory addOnPricingFactory) {
         this.repo = repo;
-        this.roomPricings = roomPricings;
-        this.addOnPricings = addOnPricings;
+        this.roomPricingFactory = roomPricingFactory;
+        this.addOnPricingFactory = addOnPricingFactory;
     }
 
     public void process(BookingRequest req) {
@@ -22,24 +23,23 @@ public class HostelFeeCalculator {
     }
 
     private Money calculateMonthly(BookingRequest req) {
-        double base = 16000.0;
-        for (RoomPricing rp : roomPricings) {
-            if (rp.supports(req.roomType)) {
-                base = rp.basePrice();
-                break;
+        List<PricingComponent> components = new ArrayList<>();
+        
+        RoomPricing roomPricing = roomPricingFactory.getPricing(req.roomType);
+        components.add(roomPricing);
+
+        for (AddOn addOn : req.addOns) {
+            AddOnPricing addOnPricing = addOnPricingFactory.getPricing(addOn);
+            if (addOnPricing != null) {
+                components.add(addOnPricing);
             }
         }
 
-        double add = 0.0;
-        for (AddOn a : req.addOns) {
-            for (AddOnPricing ap : addOnPricings) {
-                if (ap.supports(a)) {
-                    add += ap.price();
-                    break;
-                }
-            }
+        Money total = new Money(0.0);
+        for (PricingComponent component : components) {
+            total = total.plus(component.getMonthlyFee());
         }
 
-        return new Money(base + add);
+        return total;
     }
 }

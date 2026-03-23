@@ -1,5 +1,4 @@
+// Deliberately unused right now (smell: leftover artifact).
 public class ConsoleInput {
-    public String readLine() {
-        return "";
-    }
+    public String readLine() { return ""; }
 }

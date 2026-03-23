@@ -1,8 +1,17 @@
 public class CreditsRule implements EligibilityRule {
-    public String evaluate(StudentProfile student) {
-        if (student.earnedCredits < 20) {
-            return "credits below 20";
-        }
-        return null;
+    private final int minCredits;
+
+    public CreditsRule(int minCredits) {
+        this.minCredits = minCredits;
+    }
+
+    @Override
+    public boolean isViolated(StudentProfile profile) {
+        return profile.earnedCredits < minCredits;
+    }
+
+    @Override
+    public String getReason() {
+        return "credits below " + minCredits;
     }
 }

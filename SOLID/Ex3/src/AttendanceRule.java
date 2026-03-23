@@ -1,8 +1,17 @@
 public class AttendanceRule implements EligibilityRule {
-    public String evaluate(StudentProfile student) {
-        if (student.attendancePct < 75) {
-            return "attendance below 75";
-        }
-        return null;
+    private final int minAttendancePct;
+
+    public AttendanceRule(int minAttendancePct) {
+        this.minAttendancePct = minAttendancePct;
+    }
+
+    @Override
+    public boolean isViolated(StudentProfile profile) {
+        return profile.attendancePct < minAttendancePct;
+    }
+
+    @Override
+    public String getReason() {
+        return "attendance below " + minAttendancePct;
     }
 }

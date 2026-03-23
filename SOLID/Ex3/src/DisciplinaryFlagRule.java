@@ -1,8 +1,11 @@
 public class DisciplinaryFlagRule implements EligibilityRule {
-    public String evaluate(StudentProfile student) {
-        if (student.disciplinaryFlag != LegacyFlags.NONE) {
-            return "disciplinary flag present";
-        }
-        return null;
+    @Override
+    public boolean isViolated(StudentProfile profile) {
+        return profile.disciplinaryFlag != LegacyFlags.NONE;
+    }
+
+    @Override
+    public String getReason() {
+        return "disciplinary flag present";
     }
 }

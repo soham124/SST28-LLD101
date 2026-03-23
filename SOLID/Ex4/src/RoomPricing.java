@@ -1,5 +1,3 @@
-public interface RoomPricing {
-    boolean supports(int roomType);
-
-    double basePrice();
+public interface RoomPricing extends PricingComponent {
+    int getRoomType();
 }

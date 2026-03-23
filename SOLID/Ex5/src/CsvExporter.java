@@ -2,9 +2,9 @@ import java.nio.charset.StandardCharsets;
 
 public class CsvExporter extends Exporter {
     @Override
-    protected ExportResult doExport(String title, String body) {
-        String sanitized = body.replace("\n", " ").replace(",", " ");
-        String csv = "title,body\n" + title + "," + sanitized + "\n";
+    protected ExportResult doExport(ExportRequest req) {
+        String body = req.body == null ? "" : req.body.replace("\n", " ").replace(",", " ");
+        String csv = "title,body\n" + req.title + "," + body + "\n";
         return new ExportResult("text/csv", csv.getBytes(StandardCharsets.UTF_8));
     }
 }

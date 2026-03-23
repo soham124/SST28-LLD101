@@ -21,10 +21,9 @@ public class EligibilityEngine {
         String status = "ELIGIBLE";
 
         for (EligibilityRule rule : rules) {
-            String reason = rule.evaluate(s);
-            if (reason != null) {
+            if (rule.isViolated(s)) {
                 status = "NOT_ELIGIBLE";
-                reasons.add(reason);
+                reasons.add(rule.getReason());
                 break;
             }
         }
@@ -36,7 +35,6 @@ public class EligibilityEngine {
 class EligibilityEngineResult {
     public final String status;
     public final List<String> reasons;
-
     public EligibilityEngineResult(String status, List<String> reasons) {
         this.status = status;
         this.reasons = reasons;

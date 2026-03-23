@@ -1,8 +1,17 @@
 public class CgrRule implements EligibilityRule {
-    public String evaluate(StudentProfile student) {
-        if (student.cgr < 8.0) {
-            return "CGR below 8.0";
-        }
-        return null;
+    private final double minCgr;
+
+    public CgrRule(double minCgr) {
+        this.minCgr = minCgr;
+    }
+
+    @Override
+    public boolean isViolated(StudentProfile profile) {
+        return profile.cgr < minCgr;
+    }
+
+    @Override
+    public String getReason() {
+        return "CGR below " + String.format("%.1f", minCgr);
     }
 }

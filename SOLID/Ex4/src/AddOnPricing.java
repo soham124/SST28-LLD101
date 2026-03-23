@@ -1,5 +1,3 @@
-public interface AddOnPricing {
-    boolean supports(AddOn addOn);
-
-    double price();
+public interface AddOnPricing extends PricingComponent {
+    AddOn getAddOn();
 }

@@ -1,9 +1,11 @@
 public class LaundryPricing implements AddOnPricing {
-    public boolean supports(AddOn addOn) {
-        return addOn == AddOn.LAUNDRY;
+    @Override
+    public Money getMonthlyFee() {
+        return new Money(500.0);
     }
 
-    public double price() {
-        return 500.0;
+    @Override
+    public AddOn getAddOn() {
+        return AddOn.LAUNDRY;
     }
 }
